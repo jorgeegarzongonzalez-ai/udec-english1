@@ -274,7 +274,7 @@ const MODEL_FALLBACKS = ["gemini-2.5-flash","gemini-2.0-flash","gemini-flash-lat
 const S = {
   student:{name:"",program:"",code:"",group:""},
   key:"",
-  model:null,
+  models:null, modelIdx:0,
   answers:{uoe:{},read:{},listen:{}},
   scores:{uoe:0,reading:0,listening:0,writing:0,speaking:0},
   cefr:{},
@@ -326,47 +326,70 @@ setInterval(()=>{ if(S.student.name) report("heartbeat",{}); },60000);
 /* =========================================================================
    GEMINI ENGINE
    ========================================================================= */
-async function pickModel(){
-  if(S.model) return S.model;
-  try{
-    const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?key="+encodeURIComponent(S.key));
-    if(r.ok){
-      const d = await r.json();
-      const usable = (d.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent"));
-      const flash = usable.find(m=>/flash/.test(m.name) && /latest|2\.5|2\.0/.test(m.name))
-                 || usable.find(m=>/flash/.test(m.name))
-                 || usable[0];
-      if(flash){ S.model = flash.name.replace(/^models\//,""); return S.model; }
-    }
-  }catch(e){}
-  S.model = MODEL_FALLBACKS[0];
-  return S.model;
+// fetch with a hard timeout so nothing ever hangs forever
+async function fetchT(url, opts, ms){
+  const ctrl = new AbortController();
+  const t = setTimeout(()=>ctrl.abort(), ms||35000);
+  try{ return await fetch(url, Object.assign({signal:ctrl.signal}, opts||{})); }
+  finally{ clearTimeout(t); }
+}
+
+// Ask Google, live, which models this access code can actually use.
+// This excludes retired models automatically (they disappear from the list).
+async function discoverModels(){
+  let res;
+  try{ res = await fetchT("https://generativelanguage.googleapis.com/v1beta/models",{headers:{"x-goog-api-key":S.key}}, 25000); }
+  catch(e){ throw new Error(e.name==="AbortError"?"timeout":"network"); }
+  if(res.status===400||res.status===401||res.status===403){ throw new Error("key"); }
+  if(!res.ok){ throw new Error("server"); }
+  const d = await res.json();
+  let models = (d.models||[])
+    .filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent"))
+    .map(m=>m.name.replace(/^models\//,""));
+  function score(n){
+    let s=0;
+    if(/flash/.test(n)) s+=1000;           // flash = fast + free-friendly
+    if(/latest/.test(n)) s+=60;            // rolling "latest" aliases are safe
+    const v=n.match(/(\d+(?:\.\d+)?)/); if(v) s+=parseFloat(v[1]); // newer version wins
+    if(/(thinking|vision|embedding|image|audio|tts|live|exp|preview)/.test(n)) s-=500;
+    return s;
+  }
+  models.sort((a,b)=>score(b)-score(a));
+  if(!models.length) models = ["gemini-flash-latest"]; // last-resort alias
+  return models;
 }
 
 async function ai(prompt, {json=false, system=""}={}){
-  const model = await pickModel();
-  const url = "https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent?key="+encodeURIComponent(S.key);
+  if(!S.models || !S.models.length){ S.models = await discoverModels(); S.modelIdx = 0; }
   const body = {
     contents:[{role:"user",parts:[{text:prompt}]}],
-    generationConfig:{temperature:json?0.2:0.7, maxOutputTokens:1200, responseMimeType: json?"application/json":"text/plain"}
+    generationConfig:{temperature:json?0.2:0.7, maxOutputTokens:1400}
   };
   if(system) body.systemInstruction = {parts:[{text:system}]};
-  let res;
-  try{ res = await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); }
-  catch(e){ throw new Error("network"); }
-  if(res.status===400 || res.status===403){ throw new Error("key"); }
-  if(res.status===429){ throw new Error("quota"); }
-  if(res.status===404){ S.model=null; const m2=MODEL_FALLBACKS[1]; S.model=m2; return ai(prompt,{json,system}); }
-  if(!res.ok){ throw new Error("server"); }
-  const d = await res.json();
-  const txt = (d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0].text)||"";
-  if(json){ try{ return JSON.parse(txt); }catch(e){ const m=txt.match(/\{[\s\S]*\}/); if(m)return JSON.parse(m[0]); throw new Error("parse"); } }
-  return txt;
+
+  // try the chosen model; on 404 (model gone) advance to the next real model — bounded, never infinite
+  for(let attempt=0; attempt < S.models.length; attempt++){
+    const model = S.models[S.modelIdx];
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent";
+    let res;
+    try{ res = await fetchT(url,{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":S.key},body:JSON.stringify(body)}); }
+    catch(e){ throw new Error(e.name==="AbortError"?"timeout":"network"); }
+    if(res.status===404){ S.modelIdx=(S.modelIdx+1)%S.models.length; continue; }
+    if(res.status===400||res.status===401||res.status===403){ throw new Error("key"); }
+    if(res.status===429){ throw new Error("quota"); }
+    if(!res.ok){ throw new Error("server"); }
+    const d = await res.json();
+    const txt = (d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts.map(p=>p.text||"").join(""))||"";
+    if(json){ try{ return JSON.parse(txt); }catch(e){ const m=txt.match(/\{[\s\S]*\}/); if(m)return JSON.parse(m[0]); throw new Error("parse"); } }
+    return txt;
+  }
+  throw new Error("server"); // every available model returned 404 (very unlikely)
 }
 function aiErrMsg(e){
   if(e.message==="key") return "Your access code is not valid. Please check it and set it again.";
-  if(e.message==="quota") return "Your access code has reached today's free limit. Try again later.";
+  if(e.message==="quota") return "Your access code has reached today's free limit. Please try again later.";
   if(e.message==="network") return "No internet connection. Please reconnect and try again.";
+  if(e.message==="timeout") return "The coach took too long to answer. Please check your connection and try again.";
   return "The coach could not respond right now. Please try again in a moment.";
 }
 
