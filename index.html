@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="google" content="notranslate" />
+<meta name="robots" content="notranslate" />
+<title>UdeC English Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0B6E3B; --green-d:#08502b; --green-l:#0f8a4a;
+  --gold:#C9A227; --gold-l:#e3c25a;
+  --ink:#10251a; --paper:#f6f9f6; --card:#ffffff;
+  --muted:#5b6f63; --line:#dfe9e2; --ok:#128a4e; --bad:#c0392b;
+  --shadow:0 10px 30px rgba(11,110,59,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Montserrat',system-ui,Arial,sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(201,162,39,.10), transparent 60%),
+    radial-gradient(1000px 500px at 110% 0%, rgba(11,110,59,.10), transparent 55%),
+    var(--paper);
+  color:var(--ink); min-height:100vh;
+}
+.notranslate{}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+header.app{
+  display:flex;align-items:center;gap:14px;padding:14px 16px;
+  background:linear-gradient(100deg,var(--green-d),var(--green));
+  color:#fff;border-radius:16px;box-shadow:var(--shadow);margin:8px 0 18px;
+}
+header.app .seal{
+  width:52px;height:52px;border-radius:50%;flex:0 0 auto;
+  background:radial-gradient(circle at 50% 35%, var(--gold-l), var(--gold) 60%, #9c7d18 100%);
+  display:flex;align-items:center;justify-content:center;color:#3a2e07;font-weight:800;font-size:12px;
+  border:2px solid rgba(255,255,255,.6);text-align:center;line-height:1.05;
+}
+header.app h1{font-size:18px;margin:0;font-weight:800;letter-spacing:.3px}
+header.app .sub{font-size:12px;opacity:.9;font-weight:500}
+.spacer{flex:1}
+.pill{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:#fff;
+  font-size:11px;padding:4px 10px;border-radius:999px;font-weight:600}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+h2{font-size:20px;margin:0 0 6px;color:var(--green-d)}
+h3{font-size:15px;margin:18px 0 8px;color:var(--ink)}
+p.lead{color:var(--muted);margin:0 0 16px;font-size:14px;line-height:1.5}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink);margin:12px 0 5px}
+input[type=text],input[type=email],select,textarea{
+  width:100%;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;
+  font-family:inherit;font-size:14px;background:#fff;color:var(--ink);outline:none;transition:.15s
+}
+input:focus,select:focus,textarea:focus{border-color:var(--green-l);box-shadow:0 0 0 3px rgba(15,138,74,.12)}
+textarea{min-height:150px;resize:vertical;line-height:1.55}
+.hint{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}.wrap{padding:12px}}
+button,.btn{
+  font-family:inherit;font-weight:700;font-size:14px;border:none;border-radius:11px;
+  padding:13px 20px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:8px;justify-content:center
+}
+.btn-primary{background:linear-gradient(100deg,var(--green),var(--green-l));color:#fff;box-shadow:0 6px 16px rgba(11,110,59,.25)}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.btn-gold{background:linear-gradient(100deg,var(--gold),var(--gold-l));color:#3a2e07}
+.btn-ghost{background:#eef5f0;color:var(--green-d);border:1.5px solid var(--line)}
+.btn-ghost:hover{background:#e3efe8}
+.btn-rec{background:var(--bad);color:#fff}
+.btn-rec.recording{animation:pulse 1.1s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.5)}70%{box-shadow:0 0 0 12px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+.row-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+
+details.howto{margin-top:8px;border:1px dashed var(--line);border-radius:10px;padding:4px 12px;background:#fbfdfb}
+details.howto summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--green-d);padding:8px 0}
+details.howto ol{margin:4px 0 10px;padding-left:18px;font-size:12.5px;color:var(--muted);line-height:1.7}
+details.howto a{color:var(--green-l);font-weight:600}
+
+.consent{display:flex;gap:9px;align-items:flex-start;margin-top:16px;font-size:12px;color:var(--muted);line-height:1.5}
+.consent input{width:18px;height:18px;margin-top:1px;accent-color:var(--green)}
+
+/* stepper */
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.step{flex:1;min-width:120px;background:#eef5f0;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:11.5px;font-weight:600;color:var(--muted);text-align:center}
+.step.active{background:linear-gradient(100deg,var(--green),var(--green-l));color:#fff;border-color:transparent}
+.step.done{background:#e8f5ee;color:var(--green-d);border-color:#bfe3cd}
+.step .n{display:inline-block;width:18px;height:18px;line-height:18px;border-radius:50%;background:rgba(0,0,0,.08);margin-right:5px;font-size:11px}
+.step.active .n{background:rgba(255,255,255,.3)}
+
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:#fff}
+.q .qt{font-weight:600;font-size:14.5px;margin-bottom:10px;line-height:1.5}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;cursor:pointer;font-size:14px;transition:.12s;background:#fff}
+.opt:hover{border-color:var(--green-l);background:#f3faf5}
+.opt.sel{border-color:var(--green);background:#e8f5ee;font-weight:600}
+.counter{font-size:12px;color:var(--muted);text-align:right;margin-top:6px}
+.counter.bad{color:var(--bad)}
+
+.passage{background:#f3faf5;border-left:4px solid var(--green);border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.7;margin-bottom:14px;user-select:none}
+.audio-box{background:#f3faf5;border:1px solid #bfe3cd;border-radius:12px;padding:18px;text-align:center;margin-bottom:14px}
+.transcript{background:#fff;border:1.5px dashed var(--line);border-radius:10px;padding:12px;min-height:54px;font-size:14px;color:var(--ink);line-height:1.6;margin-top:10px}
+.transcript.empty{color:var(--muted);font-style:italic}
+
+.loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px;text-align:center;color:var(--muted)}
+.spin{width:38px;height:38px;border:4px solid var(--line);border-top-color:var(--green);border-radius:50%;animation:rot .9s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* dashboard */
+.score-hero{display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:linear-gradient(100deg,var(--green-d),var(--green));border-radius:16px;padding:22px;color:#fff;margin-bottom:16px}
+.grade-ring{width:110px;height:110px;flex:0 0 auto;position:relative}
+.grade-ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800}
+.grade-ring .num b{font-size:30px;line-height:1}
+.grade-ring .num span{font-size:10px;opacity:.85;font-weight:600;letter-spacing:.5px}
+.hero-meta h2{color:#fff;margin:0 0 4px}
+.hero-meta .cefr{display:inline-block;background:var(--gold);color:#3a2e07;font-weight:800;padding:3px 12px;border-radius:999px;font-size:13px;margin-top:4px}
+.hero-meta p{margin:8px 0 0;font-size:13px;opacity:.92;line-height:1.5}
+
+.skill-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.skill{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+.skill .sn{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.skill .sv{font-size:24px;font-weight:800;color:var(--green-d);margin:4px 0}
+.bar{height:8px;background:#eef5f0;border-radius:999px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--green-l));border-radius:999px}
+.skill .lvl{font-size:11px;color:var(--muted);margin-top:6px;font-weight:600}
+
+.sw{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+@media(max-width:640px){.sw{grid-template-columns:1fr}}
+.sw .box{border:1px solid var(--line);border-radius:12px;padding:14px}
+.sw .box.good{background:#f0faf4;border-color:#bfe3cd}
+.sw .box.work{background:#fff7ec;border-color:#f0dcae}
+.sw .box h4{margin:0 0 8px;font-size:13px}
+.sw ul{margin:0;padding-left:18px;font-size:13px;line-height:1.7;color:var(--ink)}
+
+/* plan */
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.drill-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff;cursor:pointer;transition:.15s;position:relative}
+.drill-card:hover{border-color:var(--green-l);box-shadow:var(--shadow);transform:translateY(-2px)}
+.drill-card .ic{font-size:22px}
+.drill-card h4{margin:8px 0 4px;font-size:14.5px;color:var(--green-d)}
+.drill-card p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.drill-card .focus{display:inline-block;margin-top:8px;font-size:10.5px;font-weight:700;background:#e8f5ee;color:var(--green-d);padding:2px 8px;border-radius:999px}
+.done-tag{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
+
+.feedback{border-radius:12px;padding:14px;margin-top:14px;font-size:14px;line-height:1.6}
+.feedback.good{background:#f0faf4;border:1px solid #bfe3cd}
+.feedback.info{background:#eef5fb;border:1px solid #c4ddf2}
+.cloze-input{display:inline-block;width:120px;padding:3px 8px;margin:0 2px;border:none;border-bottom:2px solid var(--green-l);background:#f3faf5;font-family:inherit;font-size:14px;text-align:center}
+.chat{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.msg{max-width:82%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.5}
+.msg.tutor{align-self:flex-start;background:#eef5f0;border-bottom-left-radius:4px}
+.msg.me{align-self:flex-end;background:linear-gradient(100deg,var(--green),var(--green-l));color:#fff;border-bottom-right-radius:4px}
+.msg .corr{margin-top:6px;font-size:12px;background:rgba(255,255,255,.25);border-radius:8px;padding:6px 8px}
+.msg.tutor .corr{background:#fff7ec;color:#7a5c05}
+
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;box-shadow:var(--shadow);z-index:99;opacity:0;transition:.25s;pointer-events:none}
+.toast.show{opacity:1}
+footer{text-align:center;font-size:11px;color:var(--muted);padding:18px 0 28px;line-height:1.6}
+.hidden{display:none!important}
+.err{background:#fdECEC;border:1px solid #f3c2c2;color:#8a2b22;border-radius:10px;padding:11px 13px;font-size:13px;margin-top:10px;line-height:1.5}
+</style>
+</head>
+<body class="notranslate">
+<div class="wrap">
+  <header class="app">
+    <div class="seal">UdeC</div>
+    <div>
+      <h1>UdeC English Intelligence</h1>
+      <div class="sub">Universidad de Cundinamarca · Lengua Extranjera</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="pill" id="userPill" style="display:none"></div>
+  </header>
+
+  <!-- ============ REGISTER ============ -->
+  <section id="screen-register" class="card">
+    <h2>Welcome to your English coach</h2>
+    <p class="lead">This is your personal, English-only training space. First, set up your profile and your access code. The whole experience is in English — that is part of the training.</p>
+
+    <div class="grid2">
+      <div>
+        <label>Full name</label>
+        <input id="r_name" type="text" autocomplete="off" placeholder="e.g. Laura Gómez">
+      </div>
+      <div>
+        <label>Program</label>
+        <input id="r_program" type="text" autocomplete="off" placeholder="e.g. Ingeniería">
+      </div>
+      <div>
+        <label>Student ID</label>
+        <input id="r_code" type="text" autocomplete="off" placeholder="Your university ID">
+      </div>
+      <div>
+        <label>Group</label>
+        <select id="r_group">
+          <option value="">Select your group…</option>
+          <option>LE3-T3</option><option>LE4-M1</option><option>LE4-M2</option>
+          <option>LE4-M3</option><option>LE4-N1</option><option>LE4-N3</option>
+          <option>LE4-T1</option><option>LE4-T2</option><option>LE4-T3</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Access code</label>
+    <input id="r_key" type="text" autocomplete="off" spellcheck="false" placeholder="Paste your personal access code here">
+    <div class="hint">Your access code is free and powers your coach. It is stored only in your own browser on this device.</div>
+    <details class="howto">
+      <summary>How do I get my access code?</summary>
+      <ol>
+        <li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> and sign in with a Google account.</li>
+        <li>Click the blue <b>“Create”</b> button (or <b>“Crear clave”</b>).</li>
+        <li>A long code will appear. Press <b>Copy</b> to copy the whole code.</li>
+        <li>Come back here and <b>paste</b> it in the box above.</li>
+      </ol>
+      <p style="font-size:12px;color:var(--muted)">You do this only once. Keep your code — you can reuse it every session.</p>
+    </details>
+
+    <label class="consent">
+      <input id="r_consent" type="checkbox">
+      <span>I understand this activity records my learning progress (time on task and completed exercises) so my coach and my teacher can support my learning.</span>
+    </label>
+
+    <div id="r_err" class="err hidden"></div>
+    <div class="row-actions">
+      <button class="btn btn-primary" id="r_go">Start my placement test →</button>
+    </div>
+  </section>
+
+  <!-- ============ APP (post-login) ============ -->
+  <section id="screen-app" class="hidden">
+    <div class="steps" id="stepper">
+      <div class="step" data-s="test"><span class="n">1</span>Placement test</div>
+      <div class="step" data-s="dash"><span class="n">2</span>My results</div>
+      <div class="step" data-s="plan"><span class="n">3</span>My training plan</div>
+    </div>
+
+    <!-- ---- PLACEMENT TEST ---- -->
+    <div id="view-test">
+      <!-- dynamic test sections injected here -->
+    </div>
+
+    <!-- ---- DASHBOARD ---- -->
+    <div id="view-dash" class="hidden"></div>
+
+    <!-- ---- PLAN ---- -->
+    <div id="view-plan" class="hidden"></div>
+  </section>
+
+  <footer>
+    UdeC English Intelligence · Lengua Extranjera · Universidad de Cundinamarca<br>
+    Author: Jorge Edwin Garzón González
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================================
+   CONFIG
+   ========================================================================= */
+// Teacher report endpoint. Paste your Google Apps Script /exec URL between the
+// quotes (see deployment steps). While empty, the app works fully and reporting
+// is simply skipped — no error shown to the student.
+const REPORT_URL = "https://script.google.com/macros/s/AKfycbwuQoFRa0X3Of8SgDWFr5iHdRv68cSe4jfQyKkpB8OBr-4Cjfw9d5rduYZ06LZ1h3x2/exec";
+
+const GROUPS = ["LE3-T3","LE4-M1","LE4-M2","LE4-M3","LE4-N1","LE4-N3","LE4-T1","LE4-T2","LE4-T3"];
+const MODEL_FALLBACKS = ["gemini-2.5-flash","gemini-2.0-flash","gemini-flash-latest","gemini-1.5-flash"];
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+const S = {
+  student:{name:"",program:"",code:"",group:""},
+  key:"",
+  model:null,
+  answers:{uoe:{},read:{},listen:{}},
+  scores:{uoe:0,reading:0,listening:0,writing:0,speaking:0},
+  cefr:{},
+  analysis:null,
+  grade:null,
+  writingText:"",
+  speakingText:"",
+  plan:[],
+  doneDrills:{}
+};
+const $ = s=>document.querySelector(s);
+const el = (t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+
+/* =========================================================================
+   TIME TRACKING (active seconds, pauses after 90s idle)
+   ========================================================================= */
+let activeSeconds=0, lastActivity=Date.now(), idle=false;
+const IDLE_MS=90000;
+["click","keydown","mousemove","touchstart","input"].forEach(ev=>
+  document.addEventListener(ev,()=>{lastActivity=Date.now(); if(idle)idle=false;},{passive:true}));
+setInterval(()=>{
+  if(Date.now()-lastActivity>IDLE_MS){idle=true;return;}
+  if(!idle)activeSeconds++;
+},1000);
+function fmtTime(s){const m=Math.floor(s/60),sec=s%60;return m+"m "+sec+"s";}
+
+/* =========================================================================
+   SILENT TELEMETRY  (fire-and-forget, never blocks, never shown to student)
+   ========================================================================= */
+function report(event, detail){
+  try{
+    if(!REPORT_URL) return;
+    const payload = {
+      ts:new Date().toISOString(),
+      name:S.student.name, program:S.student.program,
+      code:S.student.code, group:S.student.group,
+      event, detail:detail||{},
+      activeSeconds,
+      scores:S.scores, cefr:S.cefr, grade:S.grade
+    };
+    // text/plain avoids a CORS preflight; Apps Script reads e.postData.contents
+    fetch(REPORT_URL,{method:"POST",body:JSON.stringify(payload),keepalive:true}).catch(()=>{});
+  }catch(e){/* silent */}
+}
+window.addEventListener("beforeunload",()=>report("session_end",{reason:"unload"}));
+// heartbeat every 60s
+setInterval(()=>{ if(S.student.name) report("heartbeat",{}); },60000);
+
+/* =========================================================================
+   GEMINI ENGINE
+   ========================================================================= */
+async function pickModel(){
+  if(S.model) return S.model;
+  try{
+    const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?key="+encodeURIComponent(S.key));
+    if(r.ok){
+      const d = await r.json();
+      const usable = (d.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent"));
+      const flash = usable.find(m=>/flash/.test(m.name) && /latest|2\.5|2\.0/.test(m.name))
+                 || usable.find(m=>/flash/.test(m.name))
+                 || usable[0];
+      if(flash){ S.model = flash.name.replace(/^models\//,""); return S.model; }
+    }
+  }catch(e){}
+  S.model = MODEL_FALLBACKS[0];
+  return S.model;
+}
+
+async function ai(prompt, {json=false, system=""}={}){
+  const model = await pickModel();
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent?key="+encodeURIComponent(S.key);
+  const body = {
+    contents:[{role:"user",parts:[{text:prompt}]}],
+    generationConfig:{temperature:json?0.2:0.7, maxOutputTokens:1200, responseMimeType: json?"application/json":"text/plain"}
+  };
+  if(system) body.systemInstruction = {parts:[{text:system}]};
+  let res;
+  try{ res = await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); }
+  catch(e){ throw new Error("network"); }
+  if(res.status===400 || res.status===403){ throw new Error("key"); }
+  if(res.status===429){ throw new Error("quota"); }
+  if(res.status===404){ S.model=null; const m2=MODEL_FALLBACKS[1]; S.model=m2; return ai(prompt,{json,system}); }
+  if(!res.ok){ throw new Error("server"); }
+  const d = await res.json();
+  const txt = (d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts&&d.candidates[0].content.parts[0].text)||"";
+  if(json){ try{ return JSON.parse(txt); }catch(e){ const m=txt.match(/\{[\s\S]*\}/); if(m)return JSON.parse(m[0]); throw new Error("parse"); } }
+  return txt;
+}
+function aiErrMsg(e){
+  if(e.message==="key") return "Your access code is not valid. Please check it and set it again.";
+  if(e.message==="quota") return "Your access code has reached today's free limit. Try again later.";
+  if(e.message==="network") return "No internet connection. Please reconnect and try again.";
+  return "The coach could not respond right now. Please try again in a moment.";
+}
+
+/* =========================================================================
+   TOAST
+   ========================================================================= */
+let toastT;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2600);}
+
+/* =========================================================================
+   SPEECH (synthesis + recognition)
+   ========================================================================= */
+function speak(text, cb){
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang="en-US"; u.rate=0.95;
+    const vs = window.speechSynthesis.getVoices();
+    const en = vs.find(v=>/en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang));
+    if(en)u.voice=en;
+    if(cb)u.onend=cb;
+    window.speechSynthesis.speak(u);
+  }catch(e){ if(cb)cb(); }
+}
+const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
+function recognize(onResult,onEnd){
+  if(!SR){ onEnd&&onEnd(null,"unsupported"); return null; }
+  const r=new SR(); r.lang="en-US"; r.interimResults=true; r.continuous=true;
+  let finalTxt="";
+  r.onresult=e=>{let interim="";for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalTxt+=t+" ";else interim+=t;}onResult(finalTxt,interim);};
+  r.onerror=e=>{ onEnd&&onEnd(finalTxt.trim(), e.error); };
+  r.onend=()=>{ onEnd&&onEnd(finalTxt.trim(), null); };
+  r.start();
+  return r;
+}
+
+/* =========================================================================
+   QUESTION BANKS (placement — auto-scored skills)
+   ========================================================================= */
+const UOE = [
+ {q:"She ___ to the gym every morning before work.",o:["go","goes","going","gone"],a:1},
+ {q:"If I ___ more time, I would travel the world.",o:["have","had","will have","has"],a:1},
+ {q:"We ___ dinner when the lights suddenly went out.",o:["have","were having","had have","are having"],a:1},
+ {q:"This is ___ interesting book I have ever read.",o:["more","most","the most","much"],a:2},
+ {q:"He asked me ___ I could help him with the report.",o:["that","if","what","so"],a:1},
+ {q:"The project ___ by the whole team last month.",o:["completed","was completed","has complete","is completing"],a:1},
+ {q:"You ___ smoke here; it is strictly forbidden.",o:["mustn't","don't have to","needn't","wouldn't"],a:0},
+ {q:"I'm looking forward ___ you again soon.",o:["to see","seeing","to seeing","see"],a:2},
+ {q:"By the time she arrives, we ___ already finished.",o:["will have","have","had","will"],a:0},
+ {q:"Neither the manager nor the employees ___ aware of the change.",o:["was","were","is","has been"],a:1}
+];
+const READ_PASSAGE =
+ "Remote work has reshaped how companies operate. While it offers flexibility and cuts commuting time, "+
+ "it also demands strong self-discipline. Many workers report higher productivity at home, yet others "+
+ "struggle to separate their professional and personal lives. Successful organizations now invest in clear "+
+ "communication tools and measurable goals rather than simply counting the hours an employee is online.";
+const READ = [
+ {q:"According to the text, one clear benefit of remote work is:",o:["Higher salaries","Flexibility and less commuting","Guaranteed promotions","Shorter contracts"],a:1},
+ {q:"The passage says remote work requires workers to have:",o:["Expensive equipment","Strong self-discipline","A second job","Longer hours"],a:1},
+ {q:"What problem do some workers face?",o:["Too many holidays","Separating work and personal life","Lower internet speed","No colleagues at all"],a:1},
+ {q:"Successful organizations now focus on:",o:["Counting online hours","Clear communication and measurable goals","Reducing salaries","Banning home offices"],a:1},
+ {q:"The overall tone of the passage is:",o:["Strongly negative","Balanced and analytical","Humorous","Confused"],a:1}
+];
+const LISTEN_TEXT =
+ "Good morning everyone. Today's meeting will be short. First, the marketing team will present the results "+
+ "of the spring campaign. After that, we will discuss the budget for next quarter. Please remember that the "+
+ "deadline for your reports is this Friday, not Monday. If you have any questions, send me an email before noon.";
+const LISTEN = [
+ {q:"Why will the meeting be short?",o:["It is cancelled","The speaker only says it will be short","There is no agenda","Everyone is busy"],a:1},
+ {q:"What will the marketing team present?",o:["A new product","Results of the spring campaign","The budget","A video"],a:1},
+ {q:"When is the deadline for the reports?",o:["Monday","Friday","Next quarter","Before the meeting"],a:1},
+ {q:"How should questions be sent?",o:["By phone","By email before noon","In person after lunch","In the chat"],a:1}
+];
+
+/* =========================================================================
+   NAV
+   ========================================================================= */
+function setStep(s){
+  const order=["test","dash","plan"];
+  document.querySelectorAll(".step").forEach(st=>{
+    st.classList.remove("active","done");
+    const i=order.indexOf(st.dataset.s), cur=order.indexOf(s);
+    if(i<cur)st.classList.add("done"); if(i===cur)st.classList.add("active");
+  });
+  $("#view-test").classList.toggle("hidden",s!=="test");
+  $("#view-dash").classList.toggle("hidden",s!=="dash");
+  $("#view-plan").classList.toggle("hidden",s!=="plan");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* =========================================================================
+   REGISTER
+   ========================================================================= */
+$("#r_go").addEventListener("click", ()=>{
+  const name=$("#r_name").value.trim(), program=$("#r_program").value.trim(),
+        code=$("#r_code").value.trim(), group=$("#r_group").value,
+        key=$("#r_key").value.trim(), consent=$("#r_consent").checked;
+  const err=$("#r_err"); err.classList.add("hidden");
+  function fail(m){err.textContent=m;err.classList.remove("hidden");}
+  if(!name||!program||!code||!group) return fail("Please complete name, program, student ID and group.");
+  if(!consent) return fail("Please check the box to continue.");
+  if(key.length<15 || /\s/.test(key)) return fail("Please paste your full access code (no spaces). Open the “How do I get my access code?” help above if you need it.");
+  S.student={name,program,code,group}; S.key=key;
+  try{ localStorage.setItem("udec_key",key); localStorage.setItem("udec_student",JSON.stringify(S.student)); }catch(e){}
+  $("#userPill").style.display="inline-block";
+  $("#userPill").textContent=name.split(" ")[0]+" · "+group;
+  $("#screen-register").classList.add("hidden");
+  $("#screen-app").classList.remove("hidden");
+  report("register",{});
+  startTest();
+});
+// restore key (not full re-login, just convenience)
+try{
+  const k=localStorage.getItem("udec_key");
+  if(k) $("#r_key").value=k;
+  const st=localStorage.getItem("udec_student");
+  if(st){const o=JSON.parse(st);$("#r_name").value=o.name||"";$("#r_program").value=o.program||"";$("#r_code").value=o.code||"";if(GROUPS.includes(o.group))$("#r_group").value=o.group;}
+}catch(e){}
+
+/* =========================================================================
+   PLACEMENT TEST  (sequential sections)
+   ========================================================================= */
+let testStage=0;
+const STAGES=["uoe","reading","listening","writing","speaking"];
+function startTest(){ setStep("test"); testStage=0; report("placement_start",{}); renderStage(); }
+
+function renderStage(){
+  const v=$("#view-test"); v.innerHTML="";
+  const stage=STAGES[testStage];
+  if(stage==="uoe") return renderMCQ(v,"Part 1 · Use of English","Choose the correct option for each sentence.",UOE,"uoe");
+  if(stage==="reading") return renderReading(v);
+  if(stage==="listening") return renderListening(v);
+  if(stage==="writing") return renderWriting(v);
+  if(stage==="speaking") return renderSpeaking(v);
+}
+
+function progressLine(){
+  return `<div class="counter" style="text-align:left;margin-bottom:6px;font-weight:600">Section ${testStage+1} of 5</div>`;
+}
+
+function renderMCQ(v,title,lead,bank,storeKey,passageHtml){
+  const c=el("div","card");
+  c.innerHTML=progressLine()+`<h2>${title}</h2><p class="lead">${lead}</p>`+(passageHtml||"");
+  const wrap=el("div"); c.appendChild(wrap);
+  bank.forEach((item,i)=>{
+    const q=el("div","q");
+    q.innerHTML=`<div class="qt">${i+1}. ${item.q}</div>`;
+    const opts=el("div","opts");
+    item.o.forEach((opt,j)=>{
+      const o=el("div","opt",opt);
+      o.addEventListener("click",()=>{
+        S.answers[storeKey][i]=j;
+        opts.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel"));
+        o.classList.add("sel");
+      });
+      opts.appendChild(o);
+    });
+    q.appendChild(opts); wrap.appendChild(q);
+  });
+  const actions=el("div","row-actions");
+  const btn=el("button","btn btn-primary","Continue →");
+  btn.addEventListener("click",()=>{
+    const answered=Object.keys(S.answers[storeKey]).length;
+    if(answered<bank.length){ toast("Please answer all "+bank.length+" questions."); return; }
+    // score
+    let correct=0; bank.forEach((it,i)=>{ if(S.answers[storeKey][i]===it.a)correct++; });
+    const pct=Math.round(correct/bank.length*100);
+    if(storeKey==="uoe")S.scores.uoe=pct;
+    if(storeKey==="read")S.scores.reading=pct;
+    if(storeKey==="listen")S.scores.listening=pct;
+    report("section_done",{section:storeKey,score:pct});
+    testStage++; renderStage();
+  });
+  actions.appendChild(btn); c.appendChild(actions); v.appendChild(c);
+}
+
+function renderReading(v){
+  const passage=`<div class="passage">${READ_PASSAGE}</div>`;
+  renderMCQ(v,"Part 2 · Reading","Read the passage, then answer the questions.",READ,"read",passage);
+}
+
+function renderListening(v){
+  const c=el("div","card");
+  c.innerHTML=progressLine()+`<h2>Part 3 · Listening</h2><p class="lead">Press play and listen carefully. You can replay up to 2 times, then answer the questions.</p>`;
+  let plays=0;
+  const box=el("div","audio-box");
+  box.innerHTML=`<div style="font-size:30px">🎧</div><div style="font-size:13px;color:var(--muted);margin:6px 0 12px">Listen to the announcement</div>`;
+  const playBtn=el("button","btn btn-gold","▶ Play audio");
+  const plInfo=el("div","hint","");
+  playBtn.addEventListener("click",()=>{
+    if(plays>=2){toast("You have used your 2 replays.");return;}
+    plays++; playBtn.disabled=true; playBtn.textContent="▶ Playing…";
+    speak(LISTEN_TEXT,()=>{playBtn.disabled=false;playBtn.textContent=plays>=2?"No replays left":"▶ Replay ("+(2-plays)+" left)";});
+    plInfo.textContent="Replays used: "+plays+" / 2";
+    report("listen_play",{plays});
+  });
+  box.appendChild(playBtn); box.appendChild(plInfo); c.appendChild(box);
+  v.appendChild(c);
+  // questions below, reuse MCQ logic manually
+  const c2=el("div","card"); const wrap=el("div");
+  LISTEN.forEach((item,i)=>{
+    const q=el("div","q"); q.innerHTML=`<div class="qt">${i+1}. ${item.q}</div>`;
+    const opts=el("div","opts");
+    item.o.forEach((opt,j)=>{const o=el("div","opt",opt);o.addEventListener("click",()=>{S.answers.listen[i]=j;opts.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");});opts.appendChild(o);});
+    q.appendChild(opts); wrap.appendChild(q);
+  });
+  c2.appendChild(wrap);
+  const actions=el("div","row-actions");
+  const btn=el("button","btn btn-primary","Continue →");
+  btn.addEventListener("click",()=>{
+    if(Object.keys(S.answers.listen).length<LISTEN.length){toast("Please answer all questions.");return;}
+    let correct=0;LISTEN.forEach((it,i)=>{if(S.answers.listen[i]===it.a)correct++;});
+    S.scores.listening=Math.round(correct/LISTEN.length*100);
+    report("section_done",{section:"listening",score:S.scores.listening});
+    testStage++;renderStage();
+  });
+  actions.appendChild(btn); c2.appendChild(actions); v.appendChild(c2);
+}
+
+function renderWriting(v){
+  const c=el("div","card");
+  c.innerHTML=progressLine()+`<h2>Part 4 · Writing</h2>
+    <p class="lead">Write at least <b>80 words</b> in English about this question. Pasting is disabled — your coach needs your own writing to measure your real level.</p>
+    <div class="passage" style="user-select:text">Describe a challenge you have faced in your studies and explain how you dealt with it. What did you learn from that experience?</div>`;
+  const ta=el("textarea"); ta.placeholder="Start writing here…"; ta.id="wtext";
+  ta.addEventListener("paste",e=>{e.preventDefault();toast("Pasting is disabled. Please write in your own words.");});
+  ta.addEventListener("drop",e=>e.preventDefault());
+  const counter=el("div","counter","0 words");
+  ta.addEventListener("input",()=>{
+    const w=ta.value.trim().split(/\s+/).filter(Boolean).length;
+    counter.textContent=w+" words"; counter.classList.toggle("bad",w<80);
+  });
+  c.appendChild(ta); c.appendChild(counter);
+  const errBox=el("div","err hidden");
+  const actions=el("div","row-actions");
+  const btn=el("button","btn btn-primary","Submit writing →");
+  btn.addEventListener("click",async()=>{
+    const txt=ta.value.trim(), w=txt.split(/\s+/).filter(Boolean).length;
+    if(w<80){toast("Please write at least 80 words.");return;}
+    S.writingText=txt;
+    btn.disabled=true; errBox.classList.add("hidden");
+    c.appendChild(loadingBlock("Your coach is reading your writing…"));
+    try{
+      const r=await ai(
+        `You are an English placement examiner. A university student wrote this response (prompt: a challenge in their studies). `+
+        `Rate it and reply ONLY as JSON: {"score":0-100,"cefr":"A1|A2|B1|B2|C1","strengths":["..."],"issues":["..."]}. `+
+        `Judge grammar, vocabulary range, coherence and task fulfillment. Text: """${txt}"""`,
+        {json:true});
+      S.scores.writing=clamp(r.score); S.cefr.writing=r.cefr||cefrFromPct(r.score);
+      S._wStrengths=r.strengths||[]; S._wIssues=r.issues||[];
+      report("section_done",{section:"writing",score:S.scores.writing,cefr:S.cefr.writing});
+      testStage++; renderStage();
+    }catch(e){
+      c.querySelector(".loading")?.remove();
+      errBox.textContent=aiErrMsg(e); errBox.classList.remove("hidden"); btn.disabled=false;
+    }
+  });
+  actions.appendChild(btn); c.appendChild(errBox); c.appendChild(actions); v.appendChild(c);
+}
+
+function renderSpeaking(v){
+  const c=el("div","card");
+  const supported=!!SR;
+  c.innerHTML=progressLine()+`<h2>Part 5 · Speaking</h2>
+    <p class="lead">Speak in English for about 40–60 seconds. Your coach will listen and evaluate your fluency, grammar and vocabulary.</p>
+    <div class="passage" style="user-select:text">Talk about your plans for the future: What do you want to achieve in the next five years, and why? Give at least two reasons.</div>`;
+  if(!supported){
+    c.innerHTML+=`<div class="err">Your browser does not support the microphone recorder. Please use Google Chrome, or type what you would say below.</div>`;
+    const ta=el("textarea");ta.id="stext";ta.placeholder="Type your spoken answer here (at least 50 words)…";
+    c.appendChild(ta);
+  }else{
+    const box=el("div","audio-box");
+    box.innerHTML=`<div style="font-size:30px">🎙️</div><div style="font-size:13px;color:var(--muted);margin:6px 0 12px">Tap record, allow the microphone, and speak.</div>`;
+    const recBtn=el("button","btn btn-rec","● Record");
+    const tr=el("div","transcript empty","Your words will appear here as you speak…");
+    let rec=null, recording=false;
+    recBtn.addEventListener("click",()=>{
+      if(!recording){
+        recording=true; recBtn.classList.add("recording"); recBtn.textContent="■ Stop"; tr.classList.remove("empty"); tr.textContent="";
+        rec=recognize((fin,interim)=>{tr.textContent=(fin+interim).trim()||"…";S.speakingText=fin.trim();},
+          (finalTxt,errCode)=>{
+            recording=false; recBtn.classList.remove("recording"); recBtn.textContent="● Record again";
+            if(errCode==="not-allowed"||errCode==="service-not-allowed"){tr.textContent="";tr.classList.add("empty");tr.textContent="Microphone blocked. Please allow it in your browser and try again.";}
+            else if(finalTxt){S.speakingText=finalTxt;tr.textContent=finalTxt;}
+          });
+      }else{
+        recording=false; recBtn.classList.remove("recording"); recBtn.textContent="● Record again";
+        if(rec)rec.stop();
+      }
+    });
+    box.appendChild(recBtn); c.appendChild(box); c.appendChild(tr);
+  }
+  const errBox=el("div","err hidden");
+  const actions=el("div","row-actions");
+  const btn=el("button","btn btn-primary","Finish test & see results →");
+  btn.addEventListener("click",async()=>{
+    let txt = supported ? (S.speakingText||"") : ($("#stext")?$("#stext").value.trim():"");
+    const w=txt.split(/\s+/).filter(Boolean).length;
+    if(w<15){toast(supported?"Please record a longer answer (speak for ~40s).":"Please type at least 50 words.");return;}
+    S.speakingText=txt; btn.disabled=true; errBox.classList.add("hidden");
+    c.appendChild(loadingBlock("Your coach is evaluating your speaking…"));
+    try{
+      const r=await ai(
+        `You are an English speaking examiner. This is an automatic speech-to-text transcript of a student speaking about their future plans. `+
+        `Ignore minor transcription artifacts. Rate the SPOKEN English and reply ONLY as JSON: `+
+        `{"score":0-100,"cefr":"A1|A2|B1|B2|C1","strengths":["..."],"issues":["..."]}. Transcript: """${txt}"""`,
+        {json:true});
+      S.scores.speaking=clamp(r.score); S.cefr.speaking=r.cefr||cefrFromPct(r.score);
+      S._sStrengths=r.strengths||[]; S._sIssues=r.issues||[];
+      report("section_done",{section:"speaking",score:S.scores.speaking,cefr:S.cefr.speaking});
+      report("placement_complete",{scores:S.scores});
+      buildDashboard();
+    }catch(e){
+      c.querySelector(".loading")?.remove();
+      errBox.textContent=aiErrMsg(e); errBox.classList.remove("hidden"); btn.disabled=false;
+    }
+  });
+  actions.appendChild(btn); c.appendChild(errBox); c.appendChild(actions); v.appendChild(c);
+}
+
+function loadingBlock(msg){const d=el("div","loading");d.innerHTML=`<div class="spin"></div><div>${msg}</div>`;return d;}
+function clamp(n){n=Math.round(+n||0);return Math.max(0,Math.min(100,n));}
+function cefrFromPct(p){if(p>=90)return"C1";if(p>=75)return"B2";if(p>=55)return"B1";if(p>=35)return"A2";return"A1";}
+function gradeFromPct(p){ // 1.0–5.0 in 0.5 steps
+  let g=1+ (p/100)*4; g=Math.round(g*2)/2; return Math.max(1,Math.min(5,g)).toFixed(1);
+}
+
+/* =========================================================================
+   DASHBOARD
+   ========================================================================= */
+async function buildDashboard(){
+  // fill CEFR for auto-scored skills
+  S.cefr.uoe=cefrFromPct(S.scores.uoe);
+  S.cefr.reading=cefrFromPct(S.scores.reading);
+  S.cefr.listening=cefrFromPct(S.scores.listening);
+  const vals=Object.values(S.scores);
+  const overall=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  S.grade=gradeFromPct(overall);
+  S.cefr.overall=cefrFromPct(overall);
+
+  setStep("dash");
+  const v=$("#view-dash"); v.innerHTML="";
+  v.appendChild(loadingBlock("Preparing your results…"));
+
+  // ask AI for synthesis strengths/weaknesses + plan focus
+  let synth={strengths:[],weaknesses:[],focus:[]};
+  try{
+    synth=await ai(
+      `A student took an English placement test. Scores (0-100): Use of English ${S.scores.uoe}, Reading ${S.scores.reading}, `+
+      `Listening ${S.scores.listening}, Writing ${S.scores.writing}, Speaking ${S.scores.speaking}. `+
+      `Writing issues: ${(S._wIssues||[]).join("; ")||"n/a"}. Speaking issues: ${(S._sIssues||[]).join("; ")||"n/a"}. `+
+      `Reply ONLY as JSON: {"strengths":["3 short bullets"],"weaknesses":["3 short bullets"],`+
+      `"focus":["3 concrete grammar/communication focus areas for a personalized plan"]}. Keep bullets under 12 words.`,
+      {json:true});
+  }catch(e){
+    // graceful fallback from scores
+    const entries=Object.entries(S.scores).sort((a,b)=>a[1]-b[1]);
+    synth.weaknesses=entries.slice(0,2).map(e=>nice(e[0])+" needs practice");
+    synth.strengths=entries.slice(-2).map(e=>nice(e[0])+" is a strong area");
+    synth.focus=["Verb tenses","Communicative fluency","Vocabulary range"];
+  }
+  S.analysis=synth;
+  report("dashboard_view",{overall,grade:S.grade,cefr:S.cefr.overall});
+
+  v.innerHTML="";
+  const hero=el("div","score-hero");
+  hero.innerHTML=`
+    ${ring(S.grade)}
+    <div class="hero-meta">
+      <h2>Well done, ${esc(S.student.name.split(" ")[0])}!</h2>
+      <div class="cefr">Overall level: ${S.cefr.overall}</div>
+      <p>Here is a complete picture of your English right now. Your grade is on the 1.0–5.0 scale. Below you will find your training plan.</p>
+    </div>`;
+  v.appendChild(hero);
+
+  // skills
+  const sc=el("div","card");
+  sc.innerHTML=`<h2>Your skills</h2><p class="lead">Each skill was measured separately. Longer bars mean stronger performance.</p>`;
+  const grid=el("div","skill-grid");
+  [["Use of English","uoe"],["Reading","reading"],["Listening","listening"],["Writing","writing"],["Speaking","speaking"]].forEach(([n,k])=>{
+    const val=S.scores[k];
+    const s=el("div","skill");
+    s.innerHTML=`<div class="sn">${n}</div><div class="sv">${val}<span style="font-size:13px;color:var(--muted)">/100</span></div>
+      <div class="bar"><i style="width:${val}%"></i></div><div class="lvl">Level ${S.cefr[k]||cefrFromPct(val)}</div>`;
+    grid.appendChild(s);
+  });
+  sc.appendChild(grid); v.appendChild(sc);
+
+  // strengths / weaknesses
+  const sw=el("div","card");
+  sw.innerHTML=`<h2>Strengths & areas to improve</h2>`;
+  const sww=el("div","sw");
+  sww.innerHTML=`
+    <div class="box good"><h4>💪 Your strengths</h4><ul>${(synth.strengths||[]).map(x=>`<li>${esc(x)}</li>`).join("")||"<li>Keep practicing!</li>"}</ul></div>
+    <div class="box work"><h4>🎯 Focus on these</h4><ul>${(synth.weaknesses||[]).map(x=>`<li>${esc(x)}</li>`).join("")||"<li>Build overall confidence</li>"}</ul></div>`;
+  sw.appendChild(sww); v.appendChild(sw);
+
+  const actions=el("div","row-actions");
+  const b=el("button","btn btn-primary","Build my training plan →");
+  b.addEventListener("click",buildPlan);
+  actions.appendChild(b); v.appendChild(actions);
+}
+function ring(grade){
+  const pct=((+grade-1)/4)*100, deg=pct*3.6;
+  return `<div class="grade-ring"><svg width="110" height="110" viewBox="0 0 110 110">
+    <circle cx="55" cy="55" r="48" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="10"/>
+    <circle cx="55" cy="55" r="48" fill="none" stroke="#C9A227" stroke-width="10" stroke-linecap="round"
+      stroke-dasharray="${deg/360*301.6} 301.6" transform="rotate(-90 55 55)"/>
+  </svg><div class="num"><b>${grade}</b><span>/ 5.0</span></div></div>`;
+}
+
+/* =========================================================================
+   TRAINING PLAN  (repetition + communicative drills)
+   ========================================================================= */
+function buildPlan(){
+  setStep("plan");
+  const focus=(S.analysis&&S.analysis.focus&&S.analysis.focus.length)?S.analysis.focus:["Verb tenses","Vocabulary","Fluency"];
+  const v=$("#view-plan"); v.innerHTML="";
+  report("plan_view",{focus});
+  const intro=el("div","card");
+  intro.innerHTML=`<h2>Your personalized training plan</h2>
+    <p class="lead">Based on your results, your plan is built on <b>repetition</b> and <b>communicative practice</b>.
+    Do these in any order — the more you repeat, the faster you improve. Your coach adapts every exercise to your level (${S.cefr.overall}).</p>
+    <p class="lead" style="margin-top:-6px"><b>This cycle's focus:</b> ${focus.map(f=>`<span class="focus" style="margin:2px 4px 2px 0">${esc(f)}</span>`).join("")}</p>`;
+  v.appendChild(intro);
+
+  const drills=[
+    {id:"cloze",ic:"📝",t:"Complete the text",d:"Fill the gaps in a short text at your level. Reinforces grammar through repetition.",focus:focus[0]||"Grammar"},
+    {id:"convo",ic:"💬",t:"Complete the conversation",d:"Finish a real-life dialogue by writing the missing lines. Builds natural responses.",focus:"Communication"},
+    {id:"repeat",ic:"🔁",t:"Repeat after me",d:"Listen and repeat key sentences out loud. Trains pronunciation and rhythm.",focus:"Speaking"},
+    {id:"task",ic:"🗣️",t:"Communicative task",d:"Have a short guided conversation with your coach. One correction per turn.",focus:"Fluency"}
+  ];
+  const grid=el("div","plan-grid");
+  drills.forEach(dr=>{
+    const card=el("div","drill-card");
+    card.innerHTML=`<div class="ic">${dr.ic}</div><h4>${dr.t}</h4><p>${dr.d}</p><div class="focus">${esc(dr.focus)}</div>`+
+      (S.doneDrills[dr.id]?`<div class="done-tag">✓ done</div>`:``);
+    card.addEventListener("click",()=>openDrill(dr,focus));
+    grid.appendChild(card);
+  });
+  const pc=el("div","card"); pc.appendChild(grid); v.appendChild(pc);
+}
+
+function openDrill(dr,focus){
+  const v=$("#view-plan"); v.innerHTML="";
+  const back=el("button","btn btn-ghost","← Back to plan"); back.addEventListener("click",buildPlan);
+  v.appendChild(back);
+  const host=el("div","card"); host.style.marginTop="12px"; v.appendChild(host);
+  host.appendChild(loadingBlock("Your coach is preparing this exercise…"));
+  report("drill_open",{drill:dr.id});
+  if(dr.id==="cloze") drillCloze(host,focus);
+  else if(dr.id==="convo") drillConvo(host,focus);
+  else if(dr.id==="repeat") drillRepeat(host,focus);
+  else if(dr.id==="task") drillTask(host,focus);
+}
+
+/* ---- Complete the text (cloze) ---- */
+async function drillCloze(host,focus){
+  try{
+    const r=await ai(
+      `Create a CLOZE exercise for a ${S.cefr.overall} English learner focusing on "${focus[0]||"verb tenses"}". `+
+      `Write a short paragraph (4-5 sentences) and remove 5 key words. Reply ONLY as JSON: `+
+      `{"title":"...","parts":[{"text":"sentence start "},{"blank":"answer"},{"text":" sentence end."} ...]}. `+
+      `Use "text" for visible parts and "blank" for each gap (the value is the correct word). Keep it natural.`,
+      {json:true});
+    host.innerHTML=`<h2>📝 ${esc(r.title||"Complete the text")}</h2><p class="lead">Fill each gap with the correct word. Then check your answers.</p>`;
+    const para=el("div","passage"); para.style.lineHeight="2.4"; para.style.userSelect="text";
+    const inputs=[];
+    (r.parts||[]).forEach(p=>{
+      if(p.text!=null){ para.appendChild(document.createTextNode(p.text)); }
+      else if(p.blank!=null){ const inp=el("input","cloze-input"); inp.dataset.ans=(p.blank||"").toLowerCase().trim(); inp.type="text"; para.appendChild(inp); inputs.push(inp);}
+    });
+    host.appendChild(para);
+    const fb=el("div"); host.appendChild(fb);
+    const btn=el("button","btn btn-primary","Check answers");
+    btn.addEventListener("click",()=>{
+      let ok=0; inputs.forEach(inp=>{const val=inp.value.toLowerCase().trim();const good=val===inp.dataset.ans;inp.style.borderBottomColor=good?"var(--ok)":"var(--bad)";inp.style.background=good?"#eafaf0":"#fdecec";if(good)ok++;});
+      const pct=Math.round(ok/inputs.length*100);
+      fb.innerHTML=`<div class="feedback ${pct>=60?'good':'info'}">You got <b>${ok}/${inputs.length}</b> correct. ${pct>=80?"Excellent — repeat with a new text to lock it in.":"Review the red answers and try another text. Repetition is the key."}</div>`;
+      markDone("cloze",{score:pct});
+    });
+    const again=el("button","btn btn-ghost","New text"); again.style.marginLeft="8px"; again.addEventListener("click",()=>{host.innerHTML="";host.appendChild(loadingBlock("New text coming…"));drillCloze(host,focus);});
+    const row=el("div","row-actions"); row.appendChild(btn); row.appendChild(again); host.appendChild(row);
+  }catch(e){ host.innerHTML=`<div class="err">${aiErrMsg(e)}</div>`; }
+}
+
+/* ---- Complete the conversation ---- */
+async function drillConvo(host,focus){
+  try{
+    const r=await ai(
+      `Create a short everyday English dialogue (6 lines) for a ${S.cefr.overall} learner. Two speakers: A and the Student. `+
+      `Give A's lines; leave the Student's 3 lines blank for them to write. Reply ONLY as JSON: `+
+      `{"situation":"one line context","lines":[{"who":"A","text":"..."},{"who":"Student","text":""},{"who":"A","text":"..."},{"who":"Student","text":""},{"who":"A","text":"..."},{"who":"Student","text":""}]}`,
+      {json:true});
+    host.innerHTML=`<h2>💬 Complete the conversation</h2><p class="lead">${esc(r.situation||"Complete the dialogue.")} Write what you would say in each blank.</p>`;
+    const chat=el("div","chat"); const inputs=[];
+    (r.lines||[]).forEach(ln=>{
+      if(ln.who==="A"){ const m=el("div","msg tutor",esc(ln.text)); chat.appendChild(m); }
+      else{ const inp=el("textarea"); inp.style.minHeight="54px"; inp.placeholder="Your line…"; chat.appendChild(inp); inputs.push(inp); }
+    });
+    host.appendChild(chat);
+    const fb=el("div"); host.appendChild(fb);
+    const btn=el("button","btn btn-primary","Get feedback");
+    btn.addEventListener("click",async()=>{
+      const mine=inputs.map(i=>i.value.trim());
+      if(mine.some(x=>!x)){toast("Please complete all your lines.");return;}
+      btn.disabled=true; fb.innerHTML=""; fb.appendChild(loadingBlock("Your coach is reading your lines…"));
+      try{
+        const fr=await ai(`A ${S.cefr.overall} student completed a dialogue. Their lines: ${JSON.stringify(mine)}. `+
+          `Give warm, specific feedback in English (max 90 words): what worked, one key correction, and a better phrasing for one line. Encourage repetition.`);
+        fb.innerHTML=`<div class="feedback good">${esc(fr).replace(/\n/g,"<br>")}</div>`;
+        markDone("convo",{});
+      }catch(e){ fb.innerHTML=`<div class="err">${aiErrMsg(e)}</div>`; btn.disabled=false; }
+    });
+    const row=el("div","row-actions"); row.appendChild(btn); host.appendChild(row);
+  }catch(e){ host.innerHTML=`<div class="err">${aiErrMsg(e)}</div>`; }
+}
+
+/* ---- Repeat after me ---- */
+async function drillRepeat(host,focus){
+  try{
+    const r=await ai(`Give 5 useful English sentences for a ${S.cefr.overall} learner to practice out loud (natural, everyday, 6-12 words each). Reply ONLY as JSON: {"sentences":["...","...","...","...","..."]}`,{json:true});
+    const sents=r.sentences||["I would like a coffee, please.","Could you repeat that more slowly?","I'm looking forward to the weekend.","She has been studying for two hours.","Let's meet in front of the library."];
+    host.innerHTML=`<h2>🔁 Repeat after me</h2><p class="lead">Listen to each sentence, then record yourself repeating it. Your coach checks how close you were. Repetition builds fluent speech.</p>`;
+    let idx=0;
+    const stage=el("div","audio-box");
+    const prog=el("div","hint","");
+    const sentBox=el("div","passage"); sentBox.style.userSelect="text";
+    host.appendChild(sentBox); host.appendChild(stage); host.appendChild(prog);
+    const fb=el("div"); host.appendChild(fb);
+    function load(){
+      sentBox.textContent='"'+sents[idx]+'"'; prog.textContent="Sentence "+(idx+1)+" of "+sents.length; fb.innerHTML="";
+      stage.innerHTML="";
+      const hear=el("button","btn btn-gold","🔊 Hear it"); hear.addEventListener("click",()=>speak(sents[idx]));
+      const rec=el("button","btn btn-rec"); rec.textContent="● Record my voice"; rec.style.marginLeft="8px";
+      let recObj=null,on=false;
+      rec.addEventListener("click",()=>{
+        if(!SR){fb.innerHTML=`<div class="err">Microphone not supported — use Chrome.</div>`;return;}
+        if(!on){on=true;rec.classList.add("recording");rec.textContent="■ Stop";
+          recObj=recognize((f)=>{},(final,err)=>{on=false;rec.classList.remove("recording");rec.textContent="● Record again";check(final||"");});
+        }else{on=false;rec.classList.remove("recording");rec.textContent="● Record again";if(recObj)recObj.stop();}
+      });
+      stage.appendChild(hear); stage.appendChild(rec);
+    }
+    function check(said){
+      const target=sents[idx].toLowerCase().replace(/[^a-z\s]/g,"").split(/\s+/).filter(Boolean);
+      const got=said.toLowerCase().replace(/[^a-z\s]/g,"").split(/\s+/).filter(Boolean);
+      const hit=target.filter(w=>got.includes(w)).length;
+      const pct=Math.round(hit/Math.max(1,target.length)*100);
+      fb.innerHTML=`<div class="feedback ${pct>=70?'good':'info'}">I heard: "<i>${esc(said||"(nothing)")}</i>"<br><b>${pct}% match.</b> ${pct>=85?"Great pronunciation!":pct>=60?"Close — try once more for a smoother version.":"Listen again and repeat slowly."}</div>`;
+      const next=el("button","btn btn-primary",idx<sents.length-1?"Next sentence →":"Finish drill ✓"); next.style.marginTop="10px";
+      next.addEventListener("click",()=>{ if(idx<sents.length-1){idx++;load();}else{markDone("repeat",{});buildPlan();} });
+      fb.appendChild(next);
+    }
+    load();
+  }catch(e){ host.innerHTML=`<div class="err">${aiErrMsg(e)}</div>`; }
+}
+
+/* ---- Communicative task (live chat with coach) ---- */
+async function drillTask(host,focus){
+  host.innerHTML=`<h2>🗣️ Communicative task</h2><p class="lead">Chat with your coach in English. Keep it going for a few turns — your coach gives one correction per reply. You can type or use the mic.</p>`;
+  const chat=el("div","chat"); host.appendChild(chat);
+  const inRow=el("div"); inRow.style.display="flex"; inRow.style.gap="8px"; inRow.style.marginTop="6px";
+  const inp=el("input"); inp.type="text"; inp.placeholder="Type your message…"; inp.style.flex="1";
+  const mic=el("button","btn btn-ghost","🎙️");
+  const send=el("button","btn btn-primary","Send");
+  inRow.appendChild(inp); inRow.appendChild(mic); inRow.appendChild(send); host.appendChild(inRow);
+  const finishRow=el("div","row-actions"); const fin=el("button","btn btn-gold","Finish & save ✓"); finishRow.appendChild(fin); host.appendChild(finishRow);
+  let history=[]; let turns=0;
+  const SYS=`You are Sarah, a warm English conversation coach for a ${S.cefr.overall} university student. Speak only English. `+
+    `Keep replies short (max 45 words). Ask a follow-up question to keep the conversation going. `+
+    `In EACH reply, if the student made an error, add at the very end one line starting with "✎ Tip:" with a single gentle correction. If no error, add "✎ Tip: Nicely said!".`;
+  function bubble(who,text){const m=el("div","msg "+(who==="me"?"me":"tutor"));
+    const parts=text.split(/✎ Tip:/); m.innerHTML=esc(parts[0]).replace(/\n/g,"<br>");
+    if(parts[1])m.innerHTML+=`<div class="corr">✎ Tip:${esc(parts[1])}</div>`;
+    chat.appendChild(m); m.scrollIntoView({behavior:"smooth",block:"end"}); return m;}
+  async function kickoff(){
+    const m=bubble("tutor","…");
+    try{const r=await ai("Start a friendly short conversation. Greet the student and ask an engaging opening question about their day or interests.",{system:SYS});m.remove();bubble("tutor",r);history.push({role:"coach",text:r});}
+    catch(e){m.remove();bubble("tutor","Hi! I'm Sarah, your English coach. How is your day going so far?");}
+  }
+  async function reply(text){
+    if(!text.trim())return; bubble("me",text); history.push({role:"student",text}); turns++;
+    inp.value=""; const m=bubble("tutor","…");
+    try{
+      const convo=history.map(h=>(h.role==="coach"?"Coach: ":"Student: ")+h.text).join("\n");
+      const r=await ai(convo+"\n\nReply as the coach now.",{system:SYS});
+      m.remove(); bubble("tutor",r); history.push({role:"coach",text:r});
+      if(window.speechSynthesis) speak(r.split("✎ Tip:")[0]);
+    }catch(e){ m.remove(); bubble("tutor","Sorry, let's try that again — could you repeat your last message?"); }
+  }
+  send.addEventListener("click",()=>reply(inp.value));
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter")reply(inp.value);});
+  mic.addEventListener("click",()=>{
+    if(!SR){toast("Microphone not supported — use Chrome.");return;}
+    mic.textContent="● listening…"; mic.classList.add("btn-rec");
+    const r=recognize((f)=>{inp.value=f;},(final,err)=>{mic.textContent="🎙️";mic.classList.remove("btn-rec");if(final)inp.value=final;});
+  });
+  fin.addEventListener("click",()=>{ report("drill_done",{drill:"task",turns}); markDone("task",{turns}); toast("Great conversation! Saved."); buildPlan(); });
+  kickoff();
+}
+
+function markDone(id,detail){ S.doneDrills[id]=true; report("drill_done",Object.assign({drill:id},detail||{})); toast("Progress saved ✓"); }
+function nice(k){return ({uoe:"Use of English",reading:"Reading",listening:"Listening",writing:"Writing",speaking:"Speaking"})[k]||k;}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+</script>
+</body>
+</html>
